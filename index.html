@@ -85,15 +85,14 @@
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; }
   body {
     background: var(--bg);
     color: var(--text);
     font-family: var(--sans);
     -webkit-font-smoothing: antialiased;
-    min-height: 100dvh;
-    display: flex; align-items: center; justify-content: center;
-    padding: 24px 16px;
+    min-height: 100vh; min-height: 100dvh;
+    display: flex;
+    padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
     overflow-x: hidden;
     transition: background .35s, color .35s;
   }
@@ -123,6 +122,7 @@
 
   .card {
     width: 100%; max-width: 440px;
+    margin: auto;                      /* centred when it fits, scrolls normally when it doesn't */
     background: linear-gradient(180deg, var(--card-1), var(--card-2));
     border: 1px solid var(--card-border);
     border-radius: var(--radius);
@@ -315,6 +315,40 @@
     .card { padding: 26px 20px 22px; }
     h1 { font-size: 26px; }
     .tag { height: 68px; font-size: 24px; }
+  }
+  /* Shorter screens (most phones once browser bars are shown): tighten spacing */
+  @media (max-height: 820px) {
+    .card { padding: 22px 22px 20px; }
+    .topline { margin-bottom: 18px; }
+    .event-meta { margin-bottom: 12px; }
+    h1 { font-size: 26px; }
+    .sub { font-size: 14px; margin-top: 6px; }
+    form { margin-top: 18px; gap: 14px; }
+    .input, .stepper { height: 52px; }
+    .btn { height: 52px; }
+    .check { width: 44px; height: 44px; margin-bottom: 14px; }
+    .check svg { width: 20px; height: 20px; }
+    .table-group { margin-top: 18px; }
+    .table-label { margin-bottom: 8px; }
+    .tag { height: 64px; font-size: 24px; border-radius: 16px; }
+    .meta { margin-top: 16px; padding: 10px 14px; }
+    .meta div strong { font-size: 15px; }
+    .note { margin-top: 10px; }
+    .actions { margin-top: 16px; }
+    .link-btn { margin-top: 6px; }
+    .foot { margin-top: 16px; }
+  }
+  /* Very short screens (small phones, landscape): tighter still */
+  @media (max-height: 680px) {
+    .card { padding: 18px 18px 16px; border-radius: 20px; }
+    .topline { margin-bottom: 12px; }
+    h1 { font-size: 23px; }
+    .check { display: none; }
+    .tag { height: 56px; font-size: 21px; }
+    .tag small { font-size: 9px; }
+    .input, .stepper, .btn { height: 48px; }
+    .table-group { margin-top: 14px; }
+    .foot { margin-top: 12px; }
   }
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
