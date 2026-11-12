@@ -342,14 +342,14 @@
     <div class="event" id="eventName"></div>
     <div class="event-meta"><span id="eventDate"></span><span id="eventTime"></span></div>
     <h1>Welcome.</h1>
-    <p class="sub">Enter your surname followed by the last 3 digits of your account number.</p>
+    <p class="sub">Enter your surname followed by your year of birth.</p>
     <form id="codeForm" autocomplete="off" novalidate>
       <div>
         <label for="code">Check-in code</label>
         <input id="code" class="input" type="text" inputmode="text" maxlength="40"
                autocapitalize="off" autocorrect="off" spellcheck="false"
-               placeholder="tan456" aria-describedby="codeHint">
-        <p class="hint" id="codeHint">Surname + last 3 digits of account no. &nbsp;e.g. Tan Wei Ming, A/C 0123456 → <code>tan456</code></p>
+               placeholder="tan1975" aria-describedby="codeHint">
+        <p class="hint" id="codeHint">Surname + 4-digit birth year. &nbsp;e.g. Tan Wei Ming, born 1975 → <code>tan1975</code></p>
       </div>
       <button id="codeBtn" class="btn" type="submit" disabled>Continue</button>
     </form>
@@ -417,7 +417,7 @@ const CONFIG = {
   FOOTER: "Powered by CFD Department\n& HQ Dealing Team",   // \n = new line
   // Paste your Google Apps Script web app URL here (ends in /exec).
   // Leave empty to run in demo mode with sample data.
-  API_URL: "https://script.google.com/macros/s/AKfycbxxDiJ-o0_EjXYXopCjUHXN3syYJTNYP6buQ_DL4Ggt_ig-SdK_UgsKZWWZeCHBL7QA/exec",
+  API_URL: "https://default98f9bd1e30d74dee858bbe7f4540ec.eb.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/16/workflows/97f180972ca542e899bbb076664ef61c/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=3ZLcCRM6uXCRT39CXdFEp0Bz9vbOxK1I2f3fNLlLxIc",
   // Tablet use: return to the start screen automatically after N seconds on the tags screen (0 = off)
   AUTO_RESET_SECONDS: 0
 };
@@ -448,9 +448,9 @@ $("themeToggle").onclick = () => {
 };
 
 /* ---------- helpers ---------- */
-function normalizeCode(v) {   // "Tan 456" / "TAN456" / "tan-456" -> "tan456"
+function normalizeCode(v) {   // "Tan 1975" / "TAN1975" / "tan-1975" -> "tan1975"
   const c = String(v || "").toLowerCase().replace(/[^a-z0-9]/g, "");
-  return /^[a-z]+\d{3}$/.test(c) ? c : "";
+  return /^[a-z]+\d{4}$/.test(c) ? c : "";
 }
 function formatTime(s) {      // "yyyy-MM-dd HH:mm:ss" -> "7:42 PM"
   const m = /(\d{1,2}):(\d{2})/.exec(String(s || ""));
@@ -473,8 +473,12 @@ async function busy(btn, label, fn) {
   const original = btn.textContent;
   btn.disabled = true;
   btn.innerHTML = label + '<span class="loading-dots"><span>.</span><span>.</span><span>.</span></span>';
+  // If the server is slow, reassure the guest rather than leaving them wondering
+  const slow = setTimeout(() => {
+    btn.innerHTML = 'Just a moment<span class="loading-dots"><span>.</span><span>.</span><span>.</span></span>';
+  }, 6000);
   try { return await fn(); }
-  finally { btn.textContent = original; btn.disabled = false; }
+  finally { clearTimeout(slow); btn.textContent = original; btn.disabled = false; }
 }
 
 /* ---------- step 1: code ---------- */
@@ -610,7 +614,7 @@ function resetAll() {
 async function api(payload) {
   if (DEMO) return demoApi(payload);
   const ctrl = new AbortController();
-  const timer = setTimeout(() => ctrl.abort(), 20000);
+  const timer = setTimeout(() => ctrl.abort(), 45000);   // Power Automate can take several seconds
   try {
     // text/plain avoids a CORS preflight with Google Apps Script
     const res = await fetch(CONFIG.API_URL, {
@@ -624,28 +628,28 @@ async function api(payload) {
 }
 
 /* Demo mode: sample data held in memory only (resets on page reload) */
-const SAMPLE = [ // account_no, client_name, surname, event_tag
-  ["0123456", "Mr Tan Wei Ming", "Tan", "1A"], ["0123456", "Mr Tan Wei Ming", "Tan", "1B"], ["0123456", "Mr Tan Wei Ming", "Tan", "1C"],
-  ["1234567", "Ms Sarah Lim", "Lim", "1D"], ["1234567", "Ms Sarah Lim", "Lim", "1E"],
-  ["2345678", "Dr Rajesh Kumar", "Kumar", "2A"], ["2345678", "Dr Rajesh Kumar", "Kumar", "2B"],
-  ["2345678", "Dr Rajesh Kumar", "Kumar", "2C"], ["2345678", "Dr Rajesh Kumar", "Kumar", "2D"]
+const SAMPLE = [ // client_ref, client_name, surname, birth_year, event_tag
+  ["C001", "Mr Tan Wei Ming", "Tan", "1975", "1A"], ["C001", "Mr Tan Wei Ming", "Tan", "1975", "1B"], ["C001", "Mr Tan Wei Ming", "Tan", "1975", "1C"],
+  ["C002", "Ms Sarah Lim", "Lim", "1988", "1D"], ["C002", "Ms Sarah Lim", "Lim", "1988", "1E"],
+  ["C003", "Dr Rajesh Kumar", "Kumar", "1962", "2A"], ["C003", "Dr Rajesh Kumar", "Kumar", "1962", "2B"],
+  ["C003", "Dr Rajesh Kumar", "Kumar", "1962", "2C"], ["C003", "Dr Rajesh Kumar", "Kumar", "1962", "2D"]
 ];
 const demoCollected = {}; // tag -> time
 function demoApi({ action, code, pax }) {
   return new Promise(resolve => setTimeout(() => {
-    const keyOf = r => r[2].toLowerCase().replace(/[^a-z]/g, "") + r[0].slice(-3);
+    const keyOf = r => r[2].toLowerCase().replace(/[^a-z]/g, "") + r[3];
     const accts = [...new Set(SAMPLE.filter(r => keyOf(r) === code).map(r => r[0]))];
     if (accts.length !== 1) return resolve({ ok: false, error: "not_found" });
     const rows = SAMPLE.filter(r => r[0] === accts[0]);
     let newTags = [];
     if (action === "checkin") {
-      const remaining = rows.filter(r => !demoCollected[r[3]]);
+      const remaining = rows.filter(r => !demoCollected[r[4]]);
       if (!(pax >= 1) || pax > remaining.length) return resolve({ ok: false, error: "pax_exceeds" });
       const d = new Date(), p = x => String(x).padStart(2, "0");
       const stamp = `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
-      newTags = remaining.slice(0, pax).map(r => (demoCollected[r[3]] = stamp, r[3]));
+      newTags = remaining.slice(0, pax).map(r => (demoCollected[r[4]] = stamp, r[4]));
     }
-    const tags = rows.map(r => ({ tag: r[3], collectedAt: demoCollected[r[3]] || null }));
+    const tags = rows.map(r => ({ tag: r[4], collectedAt: demoCollected[r[4]] || null }));
     const times = tags.map(t => t.collectedAt).filter(Boolean).sort();
     resolve({ ok: true, name: rows[0][1], registered: rows.length, tags, firstCheckin: times[0] || null, newTags });
   }, 600));
