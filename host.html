@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#e8dcc2">
+<script>
+  (function () {
+    var t = "light";
+    try { if (localStorage.getItem("checkin-theme") === "dark") t = "dark"; } catch (e) {}
+    document.documentElement.setAttribute("data-theme", t);
+  })();
+</script>
+<title>Host · CFD Client Appreciation Night 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #e8dcc2;                     /* deeper champagne, so the ivory card stands out */
+    --grid: rgba(110,80,20,0.13);
+    --glow-1: rgba(212,170,50,0.30);   /* gold */
+    --glow-2: rgba(255,248,230,0.55);  /* soft light */
+    --card-1: #fffdf8;                 /* ivory */
+    --card-2: #fcf7ec;
+    --card-border: rgba(170,130,40,0.38);
+    --card-shadow: 0 1px 2px rgba(70,50,10,0.08), 0 28px 70px rgba(70,50,10,0.22), inset 0 1px 0 #fff;
+    --panel: rgba(90,70,20,0.035);
+    --panel-2: rgba(90,70,20,0.06);
+    --line: rgba(90,70,20,0.13);
+    --line-strong: rgba(90,70,20,0.28);
+    --text: #1e1a12;
+    --muted: #756a55;
+    --faint: rgba(60,48,20,0.36);
+    --placeholder: rgba(60,48,20,0.24);
+    --accent: #85650f;                 /* text-safe gold */
+    --accent-rgb: 196,154,40;
+    --accent-bg: rgba(212,175,55,0.12);
+    --accent-border: rgba(160,124,30,0.40);
+    --grad-1: #e3c56e;
+    --grad-2: #b88c2a;
+    --btn-text: #21180a;
+    --tag-edge-1: rgba(196,154,40,0.70);
+    --tag-edge-2: rgba(232,214,170,0.45);
+    --warn: #9a4a2e;
+    --warn-bg: rgba(190,100,70,0.09);
+    --warn-border: rgba(170,90,60,0.35);
+    --radius: 24px;
+    --radius-sm: 16px;
+    --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    --sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    color-scheme: light;
+  }
+  :root[data-theme="dark"] {
+    --bg: #060504;
+    --grid: rgba(255,235,190,0.05);
+    --glow-1: rgba(212,175,55,0.16);
+    --glow-2: rgba(232,214,170,0.05);
+    --card-1: #1a1610;
+    --card-2: #13100b;
+    --card-border: rgba(226,194,117,0.30);
+    --card-shadow: 0 1px 2px rgba(0,0,0,0.5), 0 30px 80px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,240,200,0.07);
+    --panel: rgba(255,240,200,0.035);
+    --panel-2: rgba(255,240,200,0.06);
+    --line: rgba(255,235,190,0.11);
+    --line-strong: rgba(255,235,190,0.24);
+    --text: #f6efe0;                   /* ivory */
+    --muted: #a59a84;
+    --faint: rgba(246,239,224,0.30);
+    --placeholder: rgba(246,239,224,0.20);
+    --accent: #e2c275;                 /* gold */
+    --accent-rgb: 226,194,117;
+    --accent-bg: rgba(226,194,117,0.10);
+    --accent-border: rgba(226,194,117,0.38);
+    --grad-1: #ecd283;
+    --grad-2: #b98e30;
+    --btn-text: #1a1306;
+    --tag-edge-1: rgba(226,194,117,0.65);
+    --tag-edge-2: rgba(226,194,117,0.10);
+    --warn: #e8a58a;
+    --warn-bg: rgba(232,165,138,0.09);
+    --warn-border: rgba(232,165,138,0.35);
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--text); font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh; min-height: 100dvh; display: flex;
+    padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+    overflow-x: hidden; transition: background .35s, color .35s;
+  }
+  body::before {
+    content: ""; position: fixed; inset: 0; z-index: -2;
+    background-image: radial-gradient(var(--grid) 1px, transparent 1px); background-size: 22px 22px;
+    mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
+  }
+  body::after {
+    content: ""; position: fixed; z-index: -1; width: 520px; height: 520px; border-radius: 50%;
+    top: -160px; right: -160px; background: radial-gradient(circle, var(--glow-1), transparent 65%); filter: blur(10px);
+  }
+  .card {
+    width: 100%; max-width: 460px; margin: auto; position: relative;
+    background: linear-gradient(180deg, var(--card-1), var(--card-2));
+    border: 1px solid var(--card-border); border-radius: var(--radius);
+    padding: 24px 22px 20px; box-shadow: var(--card-shadow);
+  }
+  .card::before {
+    content: ""; position: absolute; top: -1px; left: 18%; right: 18%; height: 2px; border-radius: 2px;
+    background: linear-gradient(90deg, transparent, var(--grad-1), var(--grad-2), var(--grad-1), transparent);
+  }
+  .topline {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 18px; white-space: nowrap;
+  }
+  .topline-right { display: inline-flex; align-items: center; gap: 8px; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 7px; border-radius: 999px; padding: 5px 11px 5px 9px;
+    font-size: 10px; letter-spacing: 0.14em;
+    border: 1px solid var(--accent-border); color: var(--accent); background: var(--accent-bg);
+  }
+  .pill.stale { border-color: var(--warn-border); color: var(--warn); background: var(--warn-bg); }
+  .dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; animation: pulse 2.2s infinite; }
+  .pill.stale .dot { animation: none; }
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(var(--accent-rgb),0.55); }
+    70% { box-shadow: 0 0 0 8px rgba(var(--accent-rgb),0); }
+    100% { box-shadow: 0 0 0 0 rgba(var(--accent-rgb),0); }
+  }
+  .icon-btn {
+    width: 34px; height: 34px; border-radius: 50%; flex: none; cursor: pointer;
+    border: 1px solid var(--line); background: var(--panel); color: var(--muted);
+    display: grid; place-items: center;
+  }
+  .icon-btn svg { width: 16px; height: 16px; }
+  .icon-btn .sun { display: none; }
+  :root[data-theme="dark"] .icon-btn .moon { display: none; }
+  :root[data-theme="dark"] .icon-btn .sun { display: block; }
+
+  .event { font-family: var(--mono); font-size: 12px; color: var(--accent); letter-spacing: 0.08em; margin-bottom: 8px; }
+  h1 { font-size: 26px; font-weight: 500; letter-spacing: -0.02em; line-height: 1.15; }
+  .sub { color: var(--muted); font-size: 14px; margin-top: 6px; line-height: 1.5; font-weight: 300; }
+  .hidden { display: none !important; }
+
+  /* PIN */
+  form { margin-top: 22px; display: grid; gap: 14px; }
+  label { display: block; font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .input {
+    width: 100%; height: 54px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius-sm);
+    color: var(--text); font-family: var(--mono); font-size: 24px; letter-spacing: 0.3em; padding: 0 18px; outline: none;
+  }
+  .input:focus { border-color: var(--accent-border); box-shadow: 0 0 0 4px rgba(var(--accent-rgb),0.10); }
+  .err { color: var(--warn); font-size: 13px; margin-top: 8px; }
+  .btn {
+    width: 100%; height: 54px; border: none; border-radius: 999px; cursor: pointer;
+    font-family: var(--sans); font-size: 16px; font-weight: 500; color: var(--btn-text);
+    background: linear-gradient(100deg, var(--grad-1), var(--grad-2));
+    box-shadow: 0 10px 30px rgba(var(--accent-rgb),0.20);
+  }
+  .btn:disabled { opacity: .45; cursor: default; box-shadow: none; }
+  .btn.ghost { background: transparent; color: var(--text); border: 1px solid var(--line); box-shadow: none; height: 46px; font-size: 15px; }
+
+  /* headline */
+  .hero { display: flex; align-items: center; gap: 18px; margin-top: 4px; }
+  .ring { width: 104px; height: 104px; flex: none; position: relative; }
+  .ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .ring .track { stroke: var(--line); }
+  .ring .bar { stroke: url(#gold); transition: stroke-dashoffset .8s cubic-bezier(.2,.7,.2,1); }
+  .ring .pct { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--mono); font-size: 26px; font-weight: 500; }
+  .hero-text .big { font-size: 22px; font-weight: 500; letter-spacing: -0.01em; line-height: 1.2; }
+  .hero-text .small { font-size: 13px; color: var(--muted); margin-top: 6px; line-height: 1.5; font-weight: 300; }
+
+  .section-label {
+    display: flex; align-items: center; gap: 10px; margin: 22px 0 10px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; color: var(--muted); text-transform: uppercase;
+  }
+  .section-label::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+
+  .cat { padding: 12px 14px; border-radius: var(--radius-sm); background: var(--panel); border: 1px solid var(--line); }
+  .cat + .cat { margin-top: 8px; }
+  .cat-top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+  .cat-name { font-size: 15px; font-weight: 500; }
+  .cat-pct { font-family: var(--mono); font-size: 18px; color: var(--accent); }
+  .meter { height: 8px; border-radius: 999px; background: var(--line); margin: 9px 0 7px; overflow: hidden; }
+  .meter > span { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--grad-1), var(--grad-2)); transition: width .8s cubic-bezier(.2,.7,.2,1); }
+  .cat-nums { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  .cat-nums b { color: var(--text); font-weight: 500; }
+
+  .people { border-radius: var(--radius-sm); border: 1px solid var(--line); overflow: hidden; }
+  .person { display: flex; align-items: center; gap: 12px; padding: 11px 14px; background: var(--panel); }
+  .person + .person { border-top: 1px solid var(--line); }
+  .badge { width: 26px; height: 26px; border-radius: 50%; flex: none; display: grid; place-items: center; border: 1px dashed var(--line-strong); }
+  .badge svg { width: 14px; height: 14px; stroke: var(--accent); display: none; }
+  .person.in .badge { border: 1px solid var(--accent-border); background: var(--accent-bg); }
+  .person.in .badge svg { display: block; }
+  .p-main { flex: 1; min-width: 0; }
+  .p-name { font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .p-cat { font-size: 11px; color: var(--muted); font-family: var(--mono); letter-spacing: .06em; text-transform: uppercase; margin-top: 2px; }
+  .p-time { font-family: var(--mono); font-size: 13px; color: var(--muted); }
+  .person.in .p-time { color: var(--accent); }
+  .person:not(.in) .p-name { color: var(--muted); }
+
+  .foot-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 18px; }
+  .stamp { font-family: var(--mono); font-size: 11px; color: var(--muted); line-height: 1.5; }
+  .refresh { width: auto; padding: 0 18px; height: 40px; font-size: 14px; flex: none; }
+  .link-btn {
+    display: block; margin: 10px auto 0; background: none; border: none; cursor: pointer; color: var(--faint);
+    font-family: var(--mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; padding: 6px 10px;
+  }
+  .empty { font-size: 13px; color: var(--muted); padding: 12px 14px; background: var(--panel); }
+  .spin { animation: spin .9s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<main class="card">
+  <div class="topline">
+    <span>Host view</span>
+    <span class="topline-right">
+      <span id="livePill" class="pill hidden"><span class="dot"></span><span id="liveText">Live</span></span>
+      <button id="themeToggle" class="icon-btn" type="button" aria-label="Switch to dark mode">
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></svg>
+      </button>
+    </span>
+  </div>
+
+  <!-- PIN -->
+  <section id="viewPin">
+    <div class="event" id="eventName"></div>
+    <h1>Host dashboard</h1>
+    <p class="sub">Enter the host PIN to see live arrivals.</p>
+    <form id="pinForm" autocomplete="off" novalidate>
+      <div>
+        <label for="pin">Host PIN</label>
+        <input id="pin" class="input" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="8" placeholder="••••••">
+        <p class="err hidden" id="pinErr"></p>
+      </div>
+      <button id="pinBtn" class="btn" type="submit" disabled>Unlock</button>
+    </form>
+  </section>
+
+  <!-- Dashboard -->
+  <section id="viewDash" class="hidden">
+    <div class="event" id="eventName2"></div>
+    <div class="hero">
+      <div class="ring" aria-hidden="true">
+        <svg viewBox="0 0 120 120">
+          <defs><linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="var(--grad-1)"/><stop offset="1" stop-color="var(--grad-2)"/></linearGradient></defs>
+          <circle class="track" cx="60" cy="60" r="52" fill="none" stroke-width="10"/>
+          <circle class="bar" id="ringBar" cx="60" cy="60" r="52" fill="none" stroke-width="10" stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
+        </svg>
+        <div class="pct" id="ringPct">0%</div>
+      </div>
+      <div class="hero-text">
+        <div class="big" id="heroBig">—</div>
+        <div class="small" id="heroSmall"></div>
+      </div>
+    </div>
+
+    <div class="section-label">By category</div>
+    <div id="cats"></div>
+
+    <div id="keyWrap">
+      <div class="section-label">Key people</div>
+      <div class="people" id="people"></div>
+    </div>
+
+    <div class="foot-row">
+      <div class="stamp" id="stamp"></div>
+      <button class="btn ghost refresh" id="refreshBtn" type="button">Refresh</button>
+    </div>
+    <button class="link-btn" id="lockBtn" type="button">Lock</button>
+  </section>
+</main>
+
+<script>
+/* ================== CONFIG ================== */
+const CONFIG = {
+  EVENT_NAME: "CFD Client Appreciation Night 2026",
+  // Same address as the check-in page. Leave empty for demo mode.
+  API_URL: "https://default98f9bd1e30d74dee858bbe7f4540ec.eb.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/16/workflows/97f180972ca542e899bbb076664ef61c/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=3ZLcCRM6uXCRT39CXdFEp0Bz9vbOxK1I2f3fNLlLxIc",
+  REFRESH_SECONDS: 60
+};
+/* ============================================ */
+
+const $ = id => document.getElementById(id);
+const DEMO = !CONFIG.API_URL;
+let pin = "", timer = null, lastGood = null;
+$("eventName").textContent = $("eventName2").textContent = CONFIG.EVENT_NAME;
+
+/* theme (shared with the check-in page) */
+function applyTheme(t) {
+  document.documentElement.setAttribute("data-theme", t);
+  document.querySelector('meta[name="theme-color"]').setAttribute("content", t === "dark" ? "#060504" : "#e8dcc2");
+}
+applyTheme(document.documentElement.getAttribute("data-theme") || "light");
+$("themeToggle").onclick = () => {
+  const next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+  applyTheme(next);
+  try { localStorage.setItem("checkin-theme", next); } catch (e) {}
+};
+
+/* helpers */
+const pct = (a, b) => b ? Math.round(a * 100 / b) : 0;
+function fmtTime(s) {
+  const m = /(\d{1,2}):(\d{2})/.exec(String(s || ""));
+  if (!m) return "";
+  let h = parseInt(m[1], 10); const ap = h >= 12 ? "PM" : "AM"; h = h % 12 || 12;
+  return `${h}:${m[2]} ${ap}`;
+}
+function nowClock() {
+  const d = new Date(); let h = d.getHours(); const ap = h >= 12 ? "PM" : "AM"; h = h % 12 || 12;
+  return `${h}:${String(d.getMinutes()).padStart(2, "0")} ${ap}`;
+}
+function show(id) { ["viewPin", "viewDash"].forEach(v => $(v).classList.toggle("hidden", v !== id)); }
+
+/* PIN */
+$("pin").addEventListener("input", () => {
+  $("pin").value = $("pin").value.replace(/\D/g, "");
+  $("pinBtn").disabled = $("pin").value.length < 4;
+});
+$("pinForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  pin = $("pin").value;
+  $("pinBtn").disabled = true; $("pinBtn").textContent = "Checking…";
+  const ok = await load(true);
+  $("pinBtn").textContent = "Unlock"; $("pinBtn").disabled = false;
+  if (ok) { try { localStorage.setItem("host-pin", pin); } catch (e) {} }
+});
+$("lockBtn").onclick = () => {
+  try { localStorage.removeItem("host-pin"); } catch (e) {}
+  clearInterval(timer); pin = ""; lastGood = null;
+  $("pin").value = ""; $("pinBtn").disabled = true; $("livePill").classList.add("hidden");
+  show("viewPin");
+};
+$("refreshBtn").onclick = () => load(false);
+
+/* data */
+async function api(payload) {
+  if (DEMO) return demo(payload);
+  const ctrl = new AbortController(); const t = setTimeout(() => ctrl.abort(), 45000);
+  try {
+    const res = await fetch(CONFIG.API_URL, {
+      method: "POST", headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(payload), signal: ctrl.signal
+    });
+    return await res.json();
+  } finally { clearTimeout(t); }
+}
+
+async function load(fromPin) {
+  const btn = $("refreshBtn");
+  btn.disabled = true; btn.textContent = "Refreshing…";
+  try {
+    const r = await api({ action: "stats", pin });
+    if (r && r.ok) {
+      lastGood = r; render(r); show("viewDash");
+      $("pinErr").classList.add("hidden");
+      setLive(true);
+      startTimer();
+      return true;
+    }
+    if (r && r.error === "pin") {
+      clearInterval(timer);
+      try { localStorage.removeItem("host-pin"); } catch (e) {}
+      $("pinErr").textContent = "That PIN isn't right."; $("pinErr").classList.remove("hidden");
+      $("livePill").classList.add("hidden");
+      show("viewPin");
+      return false;
+    }
+    throw new Error("bad response");
+  } catch (err) {
+    if (fromPin && !lastGood) {
+      $("pinErr").textContent = "Couldn't connect. Check your signal and try again.";
+      $("pinErr").classList.remove("hidden");
+    } else {
+      setLive(false);
+    }
+    return false;
+  } finally {
+    btn.disabled = false; btn.textContent = "Refresh";
+  }
+}
+
+function setLive(ok) {
+  const p = $("livePill"); p.classList.remove("hidden");
+  p.classList.toggle("stale", !ok);
+  $("liveText").textContent = ok ? "Live" : "Offline";
+  if (!ok && lastGood) $("stamp").textContent = `Couldn't refresh · showing ${fmtTime(lastGood.asOf) || "earlier"} data`;
+}
+function startTimer() {
+  clearInterval(timer);
+  timer = setInterval(() => { if (document.visibilityState === "visible") load(false); }, CONFIG.REFRESH_SECONDS * 1000);
+}
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && pin && lastGood) load(false); });
+
+function render(r) {
+  const t = r.total, p = pct(t.inGuests, t.regGuests);
+  $("ringPct").textContent = p + "%";
+  $("ringBar").style.strokeDashoffset = String(326.7 * (1 - p / 100));
+  $("heroBig").textContent = `${t.inGuests} of ${t.regGuests} guests arrived`;
+  $("heroSmall").textContent = `${t.inParties} of ${t.regParties} parties` +
+    (r.lastCheckin ? ` · last check-in ${fmtTime(r.lastCheckin)}` : " · no check-ins yet");
+
+  const cats = $("cats"); cats.innerHTML = "";
+  r.categories.forEach(c => {
+    const cp = pct(c.inGuests, c.regGuests);
+    const el = document.createElement("div"); el.className = "cat";
+    el.innerHTML = `<div class="cat-top"><span class="cat-name"></span><span class="cat-pct">${cp}%</span></div>
+      <div class="meter"><span style="width:${cp}%"></span></div>
+      <div class="cat-nums"><span><b>${c.inGuests}</b> / ${c.regGuests} guests</span><span><b>${c.inParties}</b> / ${c.regParties} parties</span></div>`;
+    el.querySelector(".cat-name").textContent = c.name;
+    cats.appendChild(el);
+  });
+
+  const kp = r.keyPeople || [];
+  $("keyWrap").classList.toggle("hidden", kp.length === 0);
+  const people = $("people"); people.innerHTML = "";
+  kp.forEach(k => {
+    const el = document.createElement("div"); el.className = "person" + (k.arrivedAt ? " in" : "");
+    el.innerHTML = `<span class="badge"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.2 4.2L19 7"/></svg></span>
+      <span class="p-main"><span class="p-name"></span><span class="p-cat"></span></span>
+      <span class="p-time"></span>`;
+    el.querySelector(".p-name").textContent = k.name;
+    el.querySelector(".p-name").style.display = "block";
+    el.querySelector(".p-cat").textContent = k.category;
+    el.querySelector(".p-cat").style.display = "block";
+    el.querySelector(".p-time").textContent = k.arrivedAt ? fmtTime(k.arrivedAt) : "Not yet";
+    people.appendChild(el);
+  });
+
+  $("stamp").textContent = `Updated ${nowClock()} · refreshes every ${CONFIG.REFRESH_SECONDS >= 60 ? Math.round(CONFIG.REFRESH_SECONDS / 60) + " min" : CONFIG.REFRESH_SECONDS + " s"}`;
+}
+
+/* demo data (only when API_URL is empty) */
+function demo(p) {
+  return new Promise(res => setTimeout(() => {
+    if (p.pin !== "123456") return res({ ok: false, error: "pin" });
+    res({ ok: true, asOf: "2026-11-27 19:06:00", lastCheckin: "2026-11-27 19:05:40",
+      total: { regGuests: 80, inGuests: 53, regParties: 38, inParties: 26 },
+      categories: [
+        { name: "Client", regGuests: 64, inGuests: 41, regParties: 26, inParties: 17 },
+        { name: "Staff", regGuests: 12, inGuests: 10, regParties: 10, inParties: 8 },
+        { name: "Vendor", regGuests: 4, inGuests: 2, regParties: 2, inParties: 1 }],
+      keyPeople: [
+        { name: "Mr Director (Opening speech)", category: "Staff", arrivedAt: "2026-11-27 18:41:00" },
+        { name: "First Speaker", category: "Staff", arrivedAt: "2026-11-27 18:55:12" },
+        { name: "Emcee", category: "Vendor", arrivedAt: null }] });
+  }, 500));
+}
+
+/* auto-unlock on this phone if the PIN was saved */
+(function () {
+  let saved = "";
+  try { saved = localStorage.getItem("host-pin") || ""; } catch (e) {}
+  if (saved) { pin = saved; $("pin").value = saved; load(true); }
+})();
+</script>
+</body>
+</html>
