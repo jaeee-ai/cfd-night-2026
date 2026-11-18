@@ -194,10 +194,10 @@
   .input {
     width: 100%; height: 58px;
     background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius-sm);
-    color: var(--text); font-family: var(--mono); font-size: 22px; letter-spacing: 0.08em;
+    color: var(--text); font-family: var(--mono); font-size: 20px; letter-spacing: 0.04em;
     padding: 0 18px; outline: none; transition: border-color .2s, background .2s, box-shadow .2s;
   }
-  .input::placeholder { color: var(--placeholder); letter-spacing: 0.08em; }
+  .input::placeholder { color: var(--placeholder); letter-spacing: 0.04em; }
   .input:focus {
     border-color: var(--accent-border); background: var(--panel-2);
     box-shadow: 0 0 0 4px rgba(var(--accent-rgb),0.10);
@@ -376,14 +376,14 @@
     <div class="event" id="eventName"></div>
     <div class="event-meta"><span id="eventDate"></span><span id="eventTime"></span></div>
     <h1>Welcome.</h1>
-    <p class="sub">Enter your surname followed by your year of birth.</p>
+    <p class="sub">Enter your surname followed by the last 4 digits of your registered mobile number.</p>
     <form id="codeForm" autocomplete="off" novalidate>
       <div>
         <label for="code">Check-in code</label>
-        <input id="code" class="input" type="text" inputmode="text" maxlength="40"
-               autocapitalize="off" autocorrect="off" spellcheck="false"
-               placeholder="tan1975" aria-describedby="codeHint">
-        <p class="hint" id="codeHint">Surname + 4-digit birth year. &nbsp;e.g. Tan Wei Ming, born 1975 → <code>tan1975</code></p>
+        <input id="code" class="input" type="text" inputmode="text" maxlength="60"
+               autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false"
+               placeholder="tan1234" aria-describedby="codeHint">
+        <p class="hint" id="codeHint">e.g. Tan Wei Ming, mobile ending 1234 → <code>tan1234</code></p>
       </div>
       <button id="codeBtn" class="btn" type="submit" disabled>Continue</button>
     </form>
@@ -482,7 +482,8 @@ $("themeToggle").onclick = () => {
 };
 
 /* ---------- helpers ---------- */
-function normalizeCode(v) {   // "Tan 1975" / "TAN1975" / "tan-1975" -> "tan1975"
+// "Tan 1234" / "TAN1234" / "tan-1234" -> "tan1234"; anything else -> ""
+function normalizeCode(v) {
   const c = String(v || "").toLowerCase().replace(/[^a-z0-9]/g, "");
   return /^[a-z]+\d{4}$/.test(c) ? c : "";
 }
@@ -662,17 +663,17 @@ async function api(payload) {
 }
 
 /* Demo mode: sample data held in memory only (resets on page reload) */
-const SAMPLE = [ // client_ref, client_name, surname, birth_year, event_tag
-  ["C001", "Mr Tan Wei Ming", "Tan", "1975", "1A"], ["C001", "Mr Tan Wei Ming", "Tan", "1975", "1B"], ["C001", "Mr Tan Wei Ming", "Tan", "1975", "1C"],
-  ["C002", "Ms Sarah Lim", "Lim", "1988", "1D"], ["C002", "Ms Sarah Lim", "Lim", "1988", "1E"],
-  ["C003", "Dr Rajesh Kumar", "Kumar", "1962", "2A"], ["C003", "Dr Rajesh Kumar", "Kumar", "1962", "2B"],
-  ["C003", "Dr Rajesh Kumar", "Kumar", "1962", "2C"], ["C003", "Dr Rajesh Kumar", "Kumar", "1962", "2D"]
+const SAMPLE = [ // client_ref, client_name, surname, mobile_last4, event_tag (demo only)
+  ["C001", "Mr Tan Wei Ming", "Tan", "1234", "1A"], ["C001", "Mr Tan Wei Ming", "Tan", "1234", "1B"], ["C001", "Mr Tan Wei Ming", "Tan", "1234", "1C"],
+  ["C002", "Ms Sarah Lim", "Lim", "0567", "1D"], ["C002", "Ms Sarah Lim", "Lim", "0567", "1E"],
+  ["C003", "Dr Rajesh Kumar", "Kumar", "8890", "2A"], ["C003", "Dr Rajesh Kumar", "Kumar", "8890", "2B"],
+  ["C003", "Dr Rajesh Kumar", "Kumar", "8890", "2C"], ["C003", "Dr Rajesh Kumar", "Kumar", "8890", "2D"]
 ];
 const demoCollected = {}; // tag -> time
 function demoApi({ action, code, pax }) {
   return new Promise(resolve => setTimeout(() => {
-    const keyOf = r => r[2].toLowerCase().replace(/[^a-z]/g, "") + r[3];
-    const accts = [...new Set(SAMPLE.filter(r => keyOf(r) === code).map(r => r[0]))];
+    const hit = r => r[2].toLowerCase().replace(/[^a-z]/g, "") + r[3] === code;
+    const accts = [...new Set(SAMPLE.filter(hit).map(r => r[0]))];
     if (accts.length !== 1) return resolve({ ok: false, error: "not_found" });
     const rows = SAMPLE.filter(r => r[0] === accts[0]);
     let newTags = [];

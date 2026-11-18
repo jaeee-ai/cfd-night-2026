@@ -303,6 +303,7 @@ const CONFIG = {
   EVENT_NAME: "CFD Client Appreciation Night 2026",
   // Same address as the check-in page. Leave empty for demo mode.
   API_URL: "https://default98f9bd1e30d74dee858bbe7f4540ec.eb.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/16/workflows/97f180972ca542e899bbb076664ef61c/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=3ZLcCRM6uXCRT39CXdFEp0Bz9vbOxK1I2f3fNLlLxIc",
+  // Auto-refresh every N seconds while the page is on screen. 0 = manual refresh only.
   REFRESH_SECONDS: 60
 };
 /* ============================================ */
@@ -423,14 +424,17 @@ async function load(fromPin) {
 function setLive(ok) {
   const p = $("livePill"); p.classList.remove("hidden");
   p.classList.toggle("stale", !ok);
-  $("liveText").textContent = ok ? "Live" : "Offline";
+  $("liveText").textContent = ok ? (CONFIG.REFRESH_SECONDS ? "Live" : "Online") : "Offline";
   if (!ok && lastGood) $("stamp").textContent = `Couldn't refresh · showing ${fmtTime(lastGood.asOf) || "earlier"} data`;
 }
 function startTimer() {
   clearInterval(timer);
+  if (!CONFIG.REFRESH_SECONDS) return;   // manual refresh only
   timer = setInterval(() => { if (document.visibilityState === "visible") load(false); }, CONFIG.REFRESH_SECONDS * 1000);
 }
-document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && pin && lastGood) load(false); });
+document.addEventListener("visibilitychange", () => {
+  if (CONFIG.REFRESH_SECONDS && document.visibilityState === "visible" && pin && lastGood) load(false);
+});
 
 function render(r) {
   const t = r.total, p = pct(t.inGuests, t.regGuests);
@@ -467,7 +471,9 @@ function render(r) {
     people.appendChild(el);
   });
 
-  $("stamp").textContent = `Updated ${nowClock()} · refreshes every ${CONFIG.REFRESH_SECONDS >= 60 ? Math.round(CONFIG.REFRESH_SECONDS / 60) + " min" : CONFIG.REFRESH_SECONDS + " s"}`;
+  $("stamp").textContent = !CONFIG.REFRESH_SECONDS
+    ? `Updated ${nowClock()} · tap Refresh for the latest`
+    : `Updated ${nowClock()} · refreshes every ${CONFIG.REFRESH_SECONDS >= 60 ? Math.round(CONFIG.REFRESH_SECONDS / 60) + " min" : CONFIG.REFRESH_SECONDS + " s"}`;
 }
 
 /* demo data (only when API_URL is empty) */
